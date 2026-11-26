@@ -1,0 +1,129 @@
+COMPUTER VISION LAB - FINAL DIAGNOSTIC REPORT
+Date: 2026-11-20
+
+SUMMARY
+--------
+Experiments tested individually: 40
+Passed: 33
+Blocked by unavailable resources or unsuitable test input: 7
+Unexpected runtime errors: 0
+
+Testing used cv_venv (Python 3.12.10), with cv2.imshow/waitKey calls shimmed
+so image processing, output generation, and keyboard branches could be tested
+without blocking on GUI automation. OpenCV reports its Windows UI backend, but
+actual on-screen rendering and manual keyboard interaction were not verified.
+Experiments 7, 26, and 39 used input_video.mp4. The reverse-video files were
+decoded and checked for dimensions, frame count, frame rate, and reverse order.
+The experiment 32-35 prompts were tested with supplied input values; invalid
+dimension inputs were also rejected.
+
+ENVIRONMENT AND DEPENDENCIES
+----------------------------
+Recommended/tested interpreter: cv_venv, Python 3.12.10.
+Installed there: opencv-contrib-python 5.1.0.95, NumPy 2.5.5,
+Matplotlib 3.11.2, and pytesseract 0.3.13. Required OpenCV APIs
+(CascadeClassifier and HOGDescriptor) are present; pip check reported no
+broken requirements. OpenCV's bundled face, eye, and smile cascades are present.
+
+The separate venv uses Python 3.14.2 and cannot import cv2. Do not use that
+environment for these experiments. No existing environment was deleted or
+modified. requirements.txt lists a compatible prebuilt-wheel dependency set
+for Python 3.10-3.13; it was not installed during this repair.
+
+pytesseract imports in cv_venv, but the external Tesseract executable was not
+found. Install Tesseract separately and set TESSERACT_CMD if it is not on PATH.
+
+IMAGE, VIDEO, AND OUTPUT CHECKS
+------------------------------
+sample.jpg exists and is 5184 x 2788 (width x height). input_video.mp4 exists
+and is 1280 x 720, 30 fps, 902 frames. Outputs are saved under outputs/;
+original input files were not overwritten.
+
+All normal image-processing outputs retained the input's 5184 x 2788 resolution.
+Intentional geometry changes verified:
+  Experiment 9: 2x image is 10368 x 5576; 0.5x image is 2592 x 1394.
+  Experiments 10 and 12: 90-degree rotations are 2788 x 5184.
+  Experiment 18: ROI is 2592 x 1394; pasted result remains 5184 x 2788.
+  Experiments 32-34: test input 640 x 480 produced 640 x 480 images.
+  Experiment 5 histogram graph: 1200 x 500 PNG.
+
+No accidental output resizing, stretching, or cropping was observed. The
+shared display helper scales down to at most 800 x 600 while preserving aspect
+ratio; it does not change processing or saved-image resolution.
+
+VIDEO VALIDATION
+----------------
+Experiment 26 output: 1280 x 720, 30 fps, 902 frames.
+Experiment 39 output: 1280 x 720, 7.5 fps, 902 frames (4x slow motion).
+For both videos the first output frame matched the final input frame (mean
+absolute pixel difference 0.82), confirming reverse order. Temporary spooled
+frames avoid retaining the complete decoded video in memory.
+
+EXPERIMENT RESULTS
+------------------
+Original status is copied from diagnostic_report.txt. "Blocked" means the
+script now gives an explicit missing-resource/input limitation rather than
+claiming a successful result.
+
+Exp | Original status | Fix applied / verification | Final status
+----|-----------------|----------------------------|-------------
+1 | PASSED | Project-relative sample path, scaled display, full-size grayscale output. | PASSED
+2 | PASSED | Removed stretched 600x400 preview; shared aspect-preserving display. | PASSED
+3 | PASSED | Project-relative path, scaled display, full-size edge output. | PASSED
+4 | PASSED | Project-relative path, scaled display, full-size equalized output. | PASSED
+5 | ERROR | Repaired plotting flow; uses non-Qt Agg backend, saves histogram PNG, displays it with OpenCV. | PASSED
+6 | PASSED | Shared display and outputs handling; full-size erosion output. | PASSED
+7 | TIMEOUT | Stops at end-of-file instead of restarting forever; keeps speed keys and Q exit. | PASSED
+8 | PASSED | Shared display and outputs handling; full-size dilation output. | PASSED
+9 | PASSED | Display scaling is consistent; intentional 2x and 0.5x output dimensions verified. | PASSED
+10 | PASSED | Project-relative paths and scaled display; rotated dimensions verified. | PASSED
+11 | PASSED | Project-relative paths and scaled display; original dimensions retained. | PASSED
+12 | PASSED | Project-relative paths and scaled display; rotated dimensions verified. | PASSED
+13 | PASSED | Project-relative paths and scaled display; affine output retains canvas size. | PASSED
+14 | PASSED | Project-relative paths and scaled display; perspective output retains canvas size. | PASSED
+15 | PASSED | Project-relative paths and scaled display; full-size corner result generated. | PASSED
+16 | PASSED | Project-relative paths and scaled display; full-size Sobel result generated. | PASSED
+17 | PASSED | Project-relative paths and scaled display; full-size watermarked output generated. | PASSED
+18 | PASSED | Project-relative paths and scaled display; intended ROI and pasted dimensions verified. | PASSED
+19 | PASSED | Project-relative paths and scaled display; full-size erosion output generated. | PASSED
+20 | PASSED | Project-relative paths and scaled display; full-size dilation output generated. | PASSED
+21 | PASSED | Shared display, project-relative input, and outputs/ save path; full-size output verified. | PASSED
+22 | PASSED | Project-relative paths, shared display, and full-size morphology output. | PASSED
+23 | PASSED | Project-relative paths, shared display, and full-size morphology output. | PASSED
+24 | PASSED | Project-relative paths, shared display, and full-size morphology output. | PASSED
+25 | ERROR | Checks both watch.jpg and watch_cascade.xml and rejects absent/invalid resources. Both are missing. | BLOCKED
+26 | PASSED | Reverse video now spools frames to temporary disk files and checks output writer errors. | PASSED
+27 | ERROR | Uses verified OpenCV face cascade and saves annotated output. sample.jpg is a landscape; detections were not validated as true faces. | BLOCKED
+28 | ERROR | Removed pedestrian HOG substitution; requires a valid vehicle cascade and reports its absence. | BLOCKED
+29 | ERROR | Uses OpenCV face/eye cascades and saves annotated output. No suitable face image was supplied; no eyes detected in the landscape sample. | BLOCKED
+30 | ERROR | Uses OpenCV face/smile cascades and saves annotated output. No suitable face image was supplied; no smiles detected in the landscape sample. | BLOCKED
+31 | PASSED | Project-relative input and outputs/ save path; full-size segmentation output generated. | PASSED
+32 | INPUT REQUIRED | Validated positive dimensions and pixel limit; 640x480 input produced expected output. | PASSED
+33 | INPUT REQUIRED | Validated positive dimensions and pixel limit; 640x480 input produced expected output. | PASSED
+34 | INPUT REQUIRED | Validated positive dimensions and pixel limit; 640x480 input produced expected output. | PASSED
+35 | INPUT REQUIRED | Accepts supplied text, rejects empty text, fits rendered text to image width, and saves output. | PASSED
+36 | PASSED | Project-relative input, shared display, and outputs/ save path; full-size result generated. | PASSED
+37 | PASSED | Project-relative input, shared display, and outputs/ save path; full-size result generated. | PASSED
+38 | ERROR | Uses verified OpenCV face cascade and saves count output. sample.jpg is a landscape; detections were not validated as true faces. | BLOCKED
+39 | TIMEOUT | Generates and plays a 4x slow-motion reverse video; Q closes preview without truncating saved output. | PASSED
+40 | ERROR | Includes pytesseract dependency and checks TESSERACT_CMD/PATH/default executable with a clear error. | BLOCKED
+
+BLOCKERS AND REMAINING LIMITATIONS
+----------------------------------
+1. Experiment 25 cannot detect watches until both watch.jpg and a trained
+   watch_cascade.xml are supplied.
+2. Experiment 28 cannot detect vehicles until a trained vehicle cascade
+   (haarcascade_car.xml) is supplied. No model was downloaded or substituted.
+3. Experiments 27, 29, 30, and 38 need a representative, labeled face image to
+   verify true-positive face/eye/smile detection. The available sample.jpg is
+   a landscape and produced false-positive face boxes; those were not counted
+   as successful detection.
+4. Experiment 40 needs the external Tesseract OCR executable. Python package
+   installation alone does not provide that executable.
+5. Image display calls and size limits were verified through a GUI test shim;
+   actual on-screen rendering was not manually verified. OpenCV's current build
+   reports Windows UI support.
+
+All available successful outputs are in outputs/. Seven experiments remain
+blocked by missing model/media/executable/test-image prerequisites; their
+status is not represented as a successful detection or OCR result.

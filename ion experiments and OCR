@@ -1,0 +1,233 @@
+[1mdiff --git a/experiment40.py b/experiment40.py[m
+[1mindex 0e27acc2..53f83651 100644[m
+[1m--- a/experiment40.py[m
+[1m+++ b/experiment40.py[m
+[36m@@ -1,46 +1,201 @@[m
+[32m+[m
+[32m+[m[32mimport shutil[m
+[32m+[m[32mfrom pathlib import Path[m
+[32m+[m
+ import cv2[m
+ import pytesseract[m
+ [m
+[31m-def extract_text_from_video(video_path):[m
+[32m+[m[32mfrom vision_utils import OUTPUT_DIR, resolve_input_path[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# --------------------------------------------------[m
+[32m+[m[32m# 1. LOCATE TESSERACT OCR[m
+[32m+[m[32m# --------------------------------------------------[m
+[32m+[m
+[32m+[m[32mtesseract_path = Path([m
+[32m+[m[32m    r"C:\Program Files\Tesseract-OCR\tesseract.exe"[m
+[32m+[m[32m)[m
+[32m+[m
+[32m+[m[32mif not tesseract_path.is_file():[m
+[32m+[m[32m    detected_path = shutil.which("tesseract")[m
+[32m+[m
+[32m+[m[32m    if detected_path:[m
+[32m+[m[32m        tesseract_path = Path(detected_path)[m
+[32m+[m[32m    else:[m
+[32m+[m[32m        raise FileNotFoundError([m
+[32m+[m[32m            "Tesseract OCR not found. Install Tesseract first."[m
+[32m+[m[32m        )[m
+[32m+[m
+[32m+[m[32mpytesseract.pytesseract.tesseract_cmd = str(tesseract_path)[m
+[32m+[m
+[32m+[m
+[32m+[m[32m# --------------------------------------------------[m
+[32m+[m[32m# 2. IMAGE PREPROCESSING[m
+[32m+[m[32m# --------------------------------------------------[m
+[32m+[m
+[32m+[m[32mdef preprocess_frame(frame):[m
+[32m+[m
+[32m+[m[32m    gray = cv2.cvtColor([m
+[32m+[m[32m        frame,[m
+[32m+[m[32m        cv2.COLOR_BGR2GRAY[m
+[32m+[m[32m    )[m
+ [m
+[31m-    # Set Tesseract executable path[m
+[31m-    pytesseract.pytesseract.tesseract_cmd = ([m
+[31m-        r"C:\Program Files\Tesseract-OCR\tesseract.exe"[m
+[32m+[m[32m    # Improve local contrast[m
+[32m+[m[32m    clahe = cv2.createCLAHE([m
+[32m+[m[32m        clipLimit=2.0,[m
+[32m+[m[32m        tileGridSize=(8, 8)[m
+     )[m
+ [m
+[31m-    # Open the video[m
+[31m-    cap = cv2.VideoCapture(video_path)[m
+[32m+[m[32m    enhanced = clahe.apply(gray)[m
+[32m+[m
+[32m+[m[32m    # Reduce noise while preserving edges[m
+[32m+[m[32m    enhanced = cv2.GaussianBlur([m
+[32m+[m[32m        enhanced,[m
+[32m+[m[32m        (3, 3),[m
+[32m+[m[32m        0[m
+[32m+[m[32m    )[m
+ [m
+[31m-    if not cap.isOpened():[m
+[31m-        print("Error: Video not found!")[m
+[31m-        return[m
+[32m+[m[32m    return enhanced[m
+ [m
+[31m-    print("Extracted Text from Video:")[m
+ [m
+[31m-    # Read video frames[m
+[31m-    while cap.isOpened():[m
+[32m+[m[32m# --------------------------------------------------[m
+[32m+[m[32m# 3. EXTRACT TEXT FROM VIDEO[m
+[32m+[m[32m# --------------------------------------------------[m
+ [m
+[31m-        ret, frame = cap.read()[m
+[32m+[m[32mdef extract_text_from_video(video_path):[m
+ [m
+[31m-        if not ret:[m
+[31m-            break[m
+[32m+[m[32m    video_file = resolve_input_path(video_path)[m
+ [m
+[31m-        # Convert frame to grayscale[m
+[31m-        gray_frame = cv2.cvtColor([m
+[31m-            frame, cv2.COLOR_BGR2GRAY[m
+[32m+[m[32m    capture = cv2.VideoCapture(str(video_file))[m
+[32m+[m
+[32m+[m[32m    if not capture.isOpened():[m
+[32m+[m[32m        raise OSError([m
+[32m+[m[32m            f"Cannot open video: {video_file}"[m
+         )[m
+ [m
+[31m-        # Extract text using OCR[m
+[31m-        text = pytesseract.image_to_string(gray_frame)[m
+[32m+[m[32m    fps = capture.get(cv2.CAP_PROP_FPS)[m
+[32m+[m
+[32m+[m[32m    if fps <= 0:[m
+[32m+[m[32m        fps = 25[m
+[32m+[m
+[32m+[m[32m    total_frames = int([m
+[32m+[m[32m        capture.get(cv2.CAP_PROP_FRAME_COUNT)[m
+[32m+[m[32m    )[m
+[32m+[m
+[32m+[m[32m    # Process one frame every second[m
+[32m+[m[32m    frame_interval = max(1, int(fps))[m
+[32m+[m
+[32m+[m[32m    extracted = [][m
+[32m+[m[32m    frame_count = 0[m
+[32m+[m[32m    processed_count = 0[m
+[32m+[m
+[32m+[m[32m    print("Starting video OCR...", flush=True)[m
+[32m+[m
+[32m+[m[32m    try:[m
+[32m+[m
+[32m+[m[32m        while True:[m
+[32m+[m
+[32m+[m[32m            ret, frame = capture.read()[m
+[32m+[m
+[32m+[m[32m            if not ret:[m
+[32m+[m[32m                break[m
+[32m+[m
+[32m+[m[32m            current_frame = frame_count[m
+[32m+[m[32m            frame_count += 1[m
+[32m+[m
+[32m+[m[32m            # Skip unnecessary frames[m
+[32m+[m[32m            if current_frame % frame_interval != 0:[m
+[32m+[m[32m                continue[m
+[32m+[m
+[32m+[m[32m            # Resize large frames[m
+[32m+[m[32m            height, width = frame.shape[:2][m
+[32m+[m
+[32m+[m[32m            if width > 1280:[m
+[32m+[m
+[32m+[m[32m                new_height = int([m
+[32m+[m[32m                    height * 1280 / width[m
+[32m+[m[32m                )[m
+[32m+[m
+[32m+[m[32m                frame = cv2.resize([m
+[32m+[m[32m                    frame,[m
+[32m+[m[32m                    (1280, new_height),[m
+[32m+[m[32m                    interpolation=cv2.INTER_AREA[m
+[32m+[m[32m                )[m
+[32m+[m
+[32m+[m[32m            # Enhance image[m
+[32m+[m[32m            processed_frame = preprocess_frame(frame)[m
+[32m+[m
+[32m+[m[32m            try:[m
+[32m+[m
+[32m+[m[32m                text = pytesseract.image_to_string([m
+[32m+[m[32m                    processed_frame,[m
+[32m+[m[32m                    config="--oem 3 --psm 11",[m
+[32m+[m[32m                    timeout=15[m
+[32m+[m[32m                )[m
+[32m+[m
+[32m+[m[32m                # Remove empty and very short lines[m
+[32m+[m[32m                lines = [[m
+[32m+[m[32m                    line.strip()[m
+[32m+[m[32m                    for line in text.splitlines()[m
+[32m+[m[32m                    if len(line.strip()) >= 3[m
+[32m+[m[32m                ][m
+[32m+[m
+[32m+[m[32m                text = "\n".join(lines)[m
+[32m+[m
+[32m+[m[32m                if text.strip():[m
+[32m+[m
+[32m+[m[32m                    extracted.append([m
+[32m+[m[32m                        f"Frame {current_frame}:\n{text}"[m
+[32m+[m[32m                    )[m
+[32m+[m
+[32m+[m[32m            except RuntimeError:[m
+[32m+[m
+[32m+[m[32m                print([m
+[32m+[m[32m                    f"OCR timeout at frame {current_frame}",[m
+[32m+[m[32m                    flush=True[m
+[32m+[m[32m                )[m
+[32m+[m
+[32m+[m[32m            processed_count += 1[m
+[32m+[m
+[32m+[m[32m            print([m
+[32m+[m[32m                f"Processed {processed_count} samples"[m
+[32m+[m[32m                f" | Video frame {frame_count}/{total_frames}",[m
+[32m+[m[32m                flush=True[m
+[32m+[m[32m            )[m
+[32m+[m
+[32m+[m[32m    finally:[m
+[32m+[m
+[32m+[m[32m        capture.release()[m
+[32m+[m[32m        cv2.destroyAllWindows()[m
+[32m+[m
+[32m+[m[32m    # --------------------------------------------------[m
+[32m+[m[32m    # 4. SAVE OCR RESULTS[m
+[32m+[m[32m    # --------------------------------------------------[m
+[32m+[m
+[32m+[m[32m    OUTPUT_DIR.mkdir([m
+[32m+[m[32m        parents=True,[m
+[32m+[m[32m        exist_ok=True[m
+[32m+[m[32m    )[m
+[32m+[m
+[32m+[m[32m    output_path = OUTPUT_DIR / "ocr_results.txt"[m
+[32m+[m
+[32m+[m[32m    output_path.write_text([m
+[32m+[m[32m        "\n\n".join(extracted),[m
+[32m+[m[32m        encoding="utf-8"[m
+[32m+[m[32m    )[m
+[32m+[m
+[32m+[m[32m    print("\nOCR processing completed.")[m
+ [m
+[31m-        if text.strip():[m
+[31m-            print(text)[m
+[32m+[m[32m    print("Frames scanned:", frame_count)[m
+[32m+[m[32m    print("Frames sampled:", processed_count)[m
+[32m+[m[32m    print("Text sections found:", len(extracted))[m
+[32m+[m[32m    print("Results saved:", output_path)[m
+ [m
+[31m-    cap.release()[m
+[31m-    cv2.destroyAllWindows()[m
+ [m
+[32m+[m[32m# --------------------------------------------------[m
+[32m+[m[32m# 5. MAIN PROGRAM[m
+[32m+[m[32m# --------------------------------------------------[m
+ [m
+[31m-# Example usage[m
+[31m-video_path = r"C:\Users\Dell\Desktop\Image_Processing\sample.mp4"[m
+[32m+[m[32mif __name__ == "__main__":[m
+ [m
+[31m-extract_text_from_video(video_path)[m
+[32m+[m[32m    extract_text_from_video("input_video.mp4")[m

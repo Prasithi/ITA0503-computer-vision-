@@ -1,0 +1,165 @@
+
+===== Experiment 1: PASSED =====
+Grayscale conversion completed successfully!
+
+===== Experiment 2: PASSED =====
+Gaussian Blur completed successfully!
+
+===== Experiment 3: PASSED =====
+Canny Edge Detection completed successfully!
+
+===== Experiment 4: PASSED =====
+Histogram Equalization completed successfully!
+
+===== Experiment 5: TIMEOUT =====
+May be waiting for a key press, GUI window, or input.
+
+===== Experiment 6: TIMEOUT =====
+May be waiting for a key press, GUI window, or input.
+
+===== Experiment 7: TIMEOUT =====
+May be waiting for a key press, GUI window, or input.
+
+===== Experiment 8: PASSED =====
+Image dilation completed successfully!
+
+===== Experiment 9: PASSED =====
+Image scaling completed successfully!
+
+===== Experiment 10: PASSED =====
+90-degree clockwise rotation completed successfully!
+
+===== Experiment 11: PASSED =====
+180-degree rotation completed successfully!
+
+===== Experiment 12: PASSED =====
+Experiment 12 completed successfully!
+
+===== Experiment 13: PASSED =====
+Affine Transformation completed successfully!
+
+===== Experiment 14: PASSED =====
+Perspective Transformation completed successfully!
+
+===== Experiment 15: PASSED =====
+Harris Corner Detection completed successfully!
+
+===== Experiment 16: PASSED =====
+Sobel Edge Detection completed successfully!
+
+===== Experiment 17: PASSED =====
+Watermark added successfully!
+
+===== Experiment 18: PASSED =====
+Image cropping, copying and pasting completed!
+
+===== Experiment 19: PASSED =====
+Image Erosion completed successfully!
+
+===== Experiment 20: PASSED =====
+Image Dilation completed successfully!
+
+===== Experiment 21: PASSED =====
+Output saved successfully: C:\Users\praji\OneDrive\Desktop\computer vision lab\outputs\opened_image.jpg
+
+===== Experiment 22: PASSED =====
+
+
+===== Experiment 23: PASSED =====
+
+
+===== Experiment 24: PASSED =====
+
+
+===== Experiment 25: ERROR =====
+Traceback (most recent call last):
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment25.py", line 12, in <module>
+    raise FileNotFoundError(
+FileNotFoundError: Watch detection requires both a watch image and a trained cascade; missing: C:\Users\praji\OneDrive\Desktop\computer vision lab\watch.jpg, C:\Users\praji\OneDrive\Desktop\computer vision lab\watch_cascade.xml
+
+===== Experiment 26: TIMEOUT =====
+May be waiting for a key press, GUI window, or input.
+
+===== Experiment 27: PASSED =====
+Faces detected: 6
+
+===== Experiment 28: ERROR =====
+Traceback (most recent call last):
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment28.py", line 80, in <module>
+    detect_vehicles("input_video.mp4")
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment28.py", line 13, in detect_vehicles
+    raise FileNotFoundError(
+FileNotFoundError: Vehicle detection requires a trained vehicle cascade at C:\Users\praji\OneDrive\Desktop\computer vision lab\haarcascade_car.xml; no pedestrian detector is used as a substitute.
+
+===== Experiment 29: PASSED =====
+Eyes detected: 0
+
+===== Experiment 30: PASSED =====
+Smiles detected: 0
+
+===== Experiment 31: PASSED =====
+
+
+===== Experiment 32: INPUT REQUIRED =====
+Enter image width: 
+Traceback (most recent call last):
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment32.py", line 38, in <module>
+    user_width, user_height = read_image_dimensions()
+                              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\vision_utils.py", line 71, in read_image_dimensions
+    width = int(input("Enter image width: "))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line
+
+===== Experiment 33: INPUT REQUIRED =====
+Enter image width: 
+Traceback (most recent call last):
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment33.py", line 38, in <module>
+    user_width, user_height = read_image_dimensions()
+                              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\vision_utils.py", line 71, in read_image_dimensions
+    width = int(input("Enter image width: "))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line
+
+===== Experiment 34: INPUT REQUIRED =====
+Enter image width: 
+Traceback (most recent call last):
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment34.py", line 35, in <module>
+    user_width, user_height = read_image_dimensions()
+                              ^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\vision_utils.py", line 71, in read_image_dimensions
+    width = int(input("Enter image width: "))
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line
+
+===== Experiment 35: INPUT REQUIRED =====
+Enter the text to display: 
+Traceback (most recent call last):
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment35.py", line 60, in <module>
+    user_text = input("Enter the text to display: ")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+EOFError: EOF when reading a line
+
+===== Experiment 36: PASSED =====
+
+
+===== Experiment 37: PASSED =====
+
+
+===== Experiment 38: PASSED =====
+Number of faces detected: 6
+
+===== Experiment 39: TIMEOUT =====
+May be waiting for a key press, GUI window, or input.
+
+===== Experiment 40: ERROR =====
+Traceback (most recent call last):
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment40.py", line 66, in <module>
+    extract_text_from_video("input_video.mp4")
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment40.py", line 35, in extract_text_from_video
+    pytesseract.pytesseract.tesseract_cmd = find_tesseract()
+                                            ^^^^^^^^^^^^^^^^
+  File "C:\Users\praji\OneDrive\Desktop\computer vision lab\experiment40.py", line 28, in find_tesseract
+    raise FileNotFoundError(
+FileNotFoundError: Tesseract OCR executable was not found. Install Tesseract OCR or set the TESSERACT_CMD environment variable to tesseract.exe.
